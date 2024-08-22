@@ -9,7 +9,11 @@ import imageio
 @ param angle: 旋转角度
 @ return rotated_img: 旋转后的图片
 """
+RANDOM_MODE = True
 def ellipse_image(image_path, output_path,ratio=0.5,angle=30):
+    if RANDOM_MODE:
+        angle = np.random.randint(0, 360)
+        ratio = np.random.uniform(0.9, 1.1)
     # 加载原始图片
     img = Image.open(image_path)
 
@@ -50,6 +54,9 @@ def ellipse_image(image_path, output_path,ratio=0.5,angle=30):
 @ return noisy_img: 噪声添加后的图片
 """
 def add_gaussian_noise(image_path, output_path, mean=0, std_dev=15):
+    if RANDOM_MODE:
+        mean = np.random.randint(0, 100)
+        std_dev = np.random.randint(0, 200)
     # 加载图片
     img = Image.open(image_path).convert('L')  # 转换为灰度图像以便处理
     img_array = np.array(img)
@@ -128,6 +135,8 @@ def blur_image(image_path, output_path):
 @ return blurred_img: 模糊后的图片
 """
 def Gaussian_blur_image(image_path, output_path,radius=5):
+    if RANDOM_MODE:
+        radius = np.random.randint(0, 10)
     img = Image.open(image_path)
     blurred_img = img.filter(ImageFilter.GaussianBlur(radius=radius))  # radius可以根据需要调整
     blurred_img.save(output_path)
@@ -141,6 +150,8 @@ def Gaussian_blur_image(image_path, output_path,radius=5):
 @ return image: 模糊后的图片
 """
 def apply_multiple_blurs(image_path, output_path, num_blurs=5):
+    if RANDOM_MODE:
+        num_blurs = np.random.randint(0, 10)
     # 打开图片
     image = Image.open(image_path)
     for _ in range(num_blurs):
