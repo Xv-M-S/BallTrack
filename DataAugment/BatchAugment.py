@@ -64,7 +64,20 @@ def process_dataset(data_dir, output_dir, times=1):
                         ellipse_image, add_gaussian_noise, add_gaussian_noise_color,
                         blur_image, Gaussian_blur_image, apply_multiple_blurs
                     ])
-                    aug_func("output_image.jpg", "aug_output_image.jpg")
+                    try:
+                        fill_color = (
+                            (image.getpixel((left + 2, top + 2))[0] + image.getpixel((right - 2, bottom - 2))[0]) // 2,
+                            (image.getpixel((left + 2, top + 2))[1] + image.getpixel((right - 2, bottom - 2))[1]) // 2,
+                            (image.getpixel((left + 2, top + 2))[2] + image.getpixel((right - 2, bottom - 2))[2]) // 2
+                        )
+                    except:
+                        fill_color = (0,128,0)
+                    # print("fill_color:" + str(fill_color))
+                    if aug_func == ellipse_image:
+                        # print("aug_func:" + str(aug_func))
+                        aug_func("output_image.jpg", "aug_output_image.jpg",fill_color)
+                    else:
+                        aug_func("output_image.jpg", "aug_output_image.jpg")
 
                     # 保存增强后的图像和标注
                     img = Image.open("aug_output_image.jpg")

@@ -11,7 +11,7 @@ import random
 @ return rotated_img: 旋转后的图片
 """
 RANDOM_MODE = True
-def ellipse_image(image_path, output_path,ratio=0.5,angle=30):
+def ellipse_image(image_path, output_path, fill_color=(0, 128, 0),ratio=0.5,angle=30):
     if RANDOM_MODE:
         angle = np.random.randint(0, 360)
         ratio = np.random.uniform(0.9, 1.1)
@@ -23,7 +23,7 @@ def ellipse_image(image_path, output_path,ratio=0.5,angle=30):
     new_height = int(img.height / ratio + 1)
 
     # 创建一个新图像，尺寸与变换后的图像相同
-    new_img = Image.new('RGB', (img.width * 10, img.height * 10), (255, 255, 255))
+    new_img = Image.new('RGB', (img.width * 10, img.height * 10), ((0, 128, 0)))
 
     # 定义透视变换矩阵，压缩y轴
     transform_matrix = (
@@ -33,7 +33,8 @@ def ellipse_image(image_path, output_path,ratio=0.5,angle=30):
     )
 
     # 使用transform方法应用变换
-    transformed_img = img.transform((new_width, new_height), Image.Transform.AFFINE, transform_matrix[:6], resample=Image.BICUBIC)
+    # transformed_img = img.transform((new_width, new_height), Image.Transform.AFFINE, transform_matrix[:6], resample=Image.BICUBIC)
+    transformed_img = img.transform((new_width, new_height), Image.Transform.AFFINE, transform_matrix[:6], resample=Image.Resampling.BICUBIC)
     # 裁剪图片
     cropped_img = transformed_img.crop((0, 0, new_width, new_height))
     # 保存裁剪后的图片
@@ -42,7 +43,7 @@ def ellipse_image(image_path, output_path,ratio=0.5,angle=30):
     cropped_img.thumbnail(max_size, Image.Resampling.LANCZOS)
     # cropped_img.save(output_path)
     # 旋转图片
-    rotated_img = cropped_img.rotate(angle, expand=True)
+    rotated_img = cropped_img.rotate(angle, expand=True, fillcolor = fill_color)
     rotated_img.save(output_path)
     return rotated_img
 
@@ -56,8 +57,8 @@ def ellipse_image(image_path, output_path,ratio=0.5,angle=30):
 """
 def add_gaussian_noise(image_path, output_path, mean=0, std_dev=15):
     if RANDOM_MODE:
-        mean = np.random.randint(0, 100)
-        std_dev = np.random.randint(0, 200)
+        mean = np.random.randint(0, 5)
+        std_dev = np.random.randint(0, 25)
     # 加载图片
     img = Image.open(image_path).convert('L')  # 转换为灰度图像以便处理
     img_array = np.array(img)
@@ -152,7 +153,7 @@ def Gaussian_blur_image(image_path, output_path,radius=5):
 """
 def apply_multiple_blurs(image_path, output_path, num_blurs=5):
     if RANDOM_MODE:
-        num_blurs = np.random.randint(0, 10)
+        num_blurs = np.random.randint(0, 3)
     # 打开图片
     image = Image.open(image_path)
     for _ in range(num_blurs):
@@ -247,6 +248,7 @@ def pad_image(img, size=(200, 200), color=(255, 255, 255)):
 #     create_gif(Gaussian_blur_img_list, r'Gaussian_blur.gif')
 
 if __name__ == "__main__":
-    add_random_patch('./TestData/1.jpg','./TestData/add_random_patch.jpg')
+    ellipse_image('./TestData/1.jpg', './TestData/1_ellipse.jpg',128 ,0.3,45)
+    # add_random_patch('./TestData/1.jpg','./TestData/add_random_patch.jpg')
 
 
