@@ -1,6 +1,7 @@
 from PIL import Image,ImageFilter
 import numpy as np
 import imageio
+import random
 """
 椭球化图片
 @ param image_path: 原始图片路径
@@ -160,6 +161,33 @@ def apply_multiple_blurs(image_path, output_path, num_blurs=5):
     return image
 
 """
+@ param image_path: 图片路径
+@ param output_path: 输出图片路径
+"""
+def add_random_patch(image_path, output_path):
+    # 打开图片
+    image = Image.open(image_path)
+    image = image.convert("RGB")  # 确保是 RGB 模式
+    width, height = image.size
+
+    # 随机选择补丁尺寸
+    patch_size = random.choice([(width//4, height//4), (width//4, height//7)])
+    patch_width, patch_height = patch_size
+
+    # 随机选择补丁的位置
+    x = random.randint(0, width - patch_width)
+    y = random.randint(0, height - patch_height)
+
+    # 创建补丁（白色或其他颜色）
+    patch = Image.new("RGB", (patch_width, patch_height), (0, 0, 0))
+
+    # 将补丁粘贴到图片上
+    image.paste(patch, (x, y))
+    image.save(output_path)
+    return image
+
+
+"""
 创建GIF
 @ param image_list: 图片列表
 @ param gif_name: GIF文件名
@@ -184,40 +212,41 @@ def pad_image(img, size=(200, 200), color=(255, 255, 255)):
     new_img.paste(img, ((size[0]-x)//2, (size[1]-y)//2))
     return new_img
 
-if __name__ == "__main__":
-    # 放缩和旋转处理
-    ellipse_image('./TestData/1.jpg', './TestData/1_ellipse.jpg', 0.3,45)
-    # 加噪声处理
-    add_gaussian_noise('./TestData/1.jpg', './TestData/noisy_image.jpg', mean=0, std_dev=15)
-    add_gaussian_noise_color('./TestData/6.jpg', './TestData/noisy_color_image.jpg', mean=0, std_dev=40)
-    # 图片模糊处理算法
-    blur_image('./TestData/1.jpg', './TestData/blurred_image.jpg')
-    Gaussian_blur_image('./TestData/1.jpg', './TestData/Gaussian_blurred_image.jpg',10)
-    apply_multiple_blurs('./TestData/1.jpg', './TestData/multiple_blurred_image.jpg', 20)
+# if __name__ == "__main__":
+#     # 放缩和旋转处理
+#     ellipse_image('./TestData/1.jpg', './TestData/1_ellipse.jpg', 0.3,45)
+#     # 加噪声处理
+#     add_gaussian_noise('./TestData/1.jpg', './TestData/noisy_image.jpg', mean=0, std_dev=15)
+#     add_gaussian_noise_color('./TestData/6.jpg', './TestData/noisy_color_image.jpg', mean=0, std_dev=40)
+#     # 图片模糊处理算法
+#     blur_image('./TestData/1.jpg', './TestData/blurred_image.jpg')
+#     Gaussian_blur_image('./TestData/1.jpg', './TestData/Gaussian_blurred_image.jpg',10)
+#     apply_multiple_blurs('./TestData/1.jpg', './TestData/multiple_blurred_image.jpg', 20)
 
-    ellipse_img_list = list()
-    add_gaussian_noise_img_list = list()
-    Gaussian_blur_img_list = list()
-    for i in range(1,10):
-        ellipse_img = ellipse_image('./TestData/1.jpg', './TestData/ellipse_image.jpg', i/10,45)
-        ellipse_img = pad_image(ellipse_img, size=(2000, 2000), color=(255, 255, 255))
-        ellipse_img_list.append(ellipse_img)
-        print("fine")
-    for i in range(1,180,10):
-        ellipse_img = ellipse_image('./TestData/1.jpg', './TestData/ellipse_image.jpg', 0.4,i)
-        ellipse_img = pad_image(ellipse_img, size=(2000, 2000), color=(255, 255, 255))
-        ellipse_img_list.append(ellipse_img)
+#     ellipse_img_list = list()
+#     add_gaussian_noise_img_list = list()
+#     Gaussian_blur_img_list = list()
+#     for i in range(1,10):
+#         ellipse_img = ellipse_image('./TestData/1.jpg', './TestData/ellipse_image.jpg', i/10,45)
+#         ellipse_img = pad_image(ellipse_img, size=(2000, 2000), color=(255, 255, 255))
+#         ellipse_img_list.append(ellipse_img)
+#         print("fine")
+#     for i in range(1,180,10):
+#         ellipse_img = ellipse_image('./TestData/1.jpg', './TestData/ellipse_image.jpg', 0.4,i)
+#         ellipse_img = pad_image(ellipse_img, size=(2000, 2000), color=(255, 255, 255))
+#         ellipse_img_list.append(ellipse_img)
     
-    for i in range(0,200,10):
-        add_gaussian_noise_img = add_gaussian_noise_color('./TestData/6.jpg', './TestData/add_gaussian_noise_image.jpg', mean=0, std_dev=i)
-        add_gaussian_noise_img_list.append(add_gaussian_noise_img)
-    for i in range(0,30,1):
-        gaussian_blur_img = Gaussian_blur_image('./TestData/1.jpg', './TestData/Gaussian_blur_image.jpg',i)
-        Gaussian_blur_img_list.append(gaussian_blur_img)
-    create_gif(ellipse_img_list, r'ellipse.gif')
-    create_gif(add_gaussian_noise_img_list, r'add_gaussian_noise.gif')
-    create_gif(Gaussian_blur_img_list, r'Gaussian_blur.gif')
+#     for i in range(0,200,10):
+#         add_gaussian_noise_img = add_gaussian_noise_color('./TestData/6.jpg', './TestData/add_gaussian_noise_image.jpg', mean=0, std_dev=i)
+#         add_gaussian_noise_img_list.append(add_gaussian_noise_img)
+#     for i in range(0,30,1):
+#         gaussian_blur_img = Gaussian_blur_image('./TestData/1.jpg', './TestData/Gaussian_blur_image.jpg',i)
+#         Gaussian_blur_img_list.append(gaussian_blur_img)
+#     create_gif(ellipse_img_list, r'ellipse.gif')
+#     create_gif(add_gaussian_noise_img_list, r'add_gaussian_noise.gif')
+#     create_gif(Gaussian_blur_img_list, r'Gaussian_blur.gif')
 
-
+if __name__ == "__main__":
+    add_random_patch('./TestData/1.jpg','./TestData/add_random_patch.jpg')
 
 
