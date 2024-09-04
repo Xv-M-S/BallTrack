@@ -62,7 +62,7 @@ def process_dataset(data_dir, output_dir, times=1):
                     # 应用数据增强
                     aug_func = random.choice([
                         ellipse_image, add_gaussian_noise, add_gaussian_noise_color,
-                        blur_image, Gaussian_blur_image, apply_multiple_blurs
+                        blur_image, Gaussian_blur_image, apply_multiple_blurs,add_random_patch
                     ])
                     try:
                         fill_color = (
