@@ -10,11 +10,11 @@ import random
 @ param angle: 旋转角度
 @ return rotated_img: 旋转后的图片
 """
-RANDOM_MODE = True
+RANDOM_MODE = False 
 def ellipse_image(image_path, output_path, fill_color=(0, 128, 0),ratio=0.5,angle=30):
     if RANDOM_MODE:
         angle = np.random.randint(0, 360)
-        ratio = np.random.uniform(0.9, 1.1)
+        ratio = np.random.uniform(0.8, 1.2)
     # 加载原始图片
     img = Image.open(image_path)
 
@@ -145,6 +145,70 @@ def Gaussian_blur_image(image_path, output_path,radius=5):
     return blurred_img
 
 """
+调整图像不同部分的透明度
+@ param image_path: 原始图片路径
+@ param output_path: 输出图片路径
+@ steps: 透明图片重叠次数
+"""
+def create_transparence(image_path, output_path, steps=10):
+    image = Image.open(image_path).convert('RGBA')
+    result = Image.new('RGBA', image.size)
+    
+    for i in range(steps):
+        # 逐步减小图像的透明度
+        alpha = int(255 * (1 - i / steps))
+        temp_image = image.copy()
+        temp_image.putalpha(alpha)
+        
+        # 合并图像
+        result = Image.alpha_composite(result, temp_image)
+    result = result.convert('RGB')
+    result.save(output_path)
+    return result
+
+"""
+形成伪影效果，由于图片遮挡不明显
+@ param image_path: 原始图片路径
+@ param output_path: 输出图片路径
+@ steps: 透明图片重叠次数
+"""
+def create_moving_fade_effect(image_path, output_path, steps=10):
+    image = Image.open(image_path).convert('RGBA')
+    image = image.resize((32,32))
+    background = Image.new('RGBA', (512, 512), color=(255,255,255))
+
+    bg_width, bg_height = background.size
+    img_width, img_height = image.size
+    xx = (bg_width - img_width) // 2
+    yy = (bg_height - img_height) // 2
+
+    # 将原始图像粘贴到背景图像的中心
+    background.paste(image, (xx, yy))
+
+    direction = [1,1]
+    increase_amount = 100
+    for i in range(steps):
+        # 移动图像
+        xx += direction[0]*4
+        yy += direction[1]*4
+
+        # 增加透明度
+        r, g, b, a = image.split()
+        new_a = Image.new("L", image.size)  # 创建新的透明度通道
+        for y in range(image.height):
+            for x in range(image.width):
+                current_alpha = a.getpixel((x, y))
+                new_alpha = min(255, current_alpha + i*increase_amount)  # 确保不超过255
+                new_a.putpixel((x, y), new_alpha)
+
+        new_image = Image.merge("RGBA", (r, g, b, new_a))
+        background.paste(new_image, (xx, yy))
+
+
+    # 保存最终结果
+    background.save('moving_fade_result.png')
+
+"""
 多层次模糊图片
 @ param image_path: 原始图片路径
 @ param output_path: 输出图片路径
@@ -201,6 +265,7 @@ def create_gif(image_list, gif_name, duration=1.0):
     imageio.mimsave(gif_name, frames, 'GIF', duration=duration)
     return 
 
+
 """
 用于将图像调整到相同大小的函数
 @ param img: 原始图片
@@ -248,7 +313,19 @@ def pad_image(img, size=(200, 200), color=(255, 255, 255)):
 #     create_gif(Gaussian_blur_img_list, r'Gaussian_blur.gif')
 
 if __name__ == "__main__":
-    ellipse_image('./TestData/1.jpg', './TestData/1_ellipse.jpg',128 ,0.3,45)
+    # ellipse_img_list = list()
+    # for i in range(1,10):
+    #     ellipse_img = ellipse_image('./TestData/1.jpg', './TestData/ellipse_image.jpg',(0,128,0), i/10,45)
+    #     ellipse_img = pad_image(ellipse_img, size=(2000, 2000), color=(255, 255, 255))
+    #     ellipse_img_list.append(ellipse_img)
+    #     print("fine")
+    # for i in range(1,180,10):
+    #     ellipse_img = ellipse_image('./TestData/1.jpg', './TestData/ellipse_image.jpg',(0,128,0), 0.4,i)
+    #     ellipse_img = pad_image(ellipse_img, size=(2000, 2000), color=(255, 255, 255))
+    #     ellipse_img_list.append(ellipse_img)
+    # create_gif(ellipse_img_list, r'ellipse.gif',200)
+    # ellipse_image('./TestData/1.jpg', './TestData/1_ellipse.jpg',128 ,0.3,45)
     # add_random_patch('./TestData/1.jpg','./TestData/add_random_patch.jpg')
+    create_moving_fade_effect('./TestData/1.jpg','./TestData/fad.jpg')
 
 
