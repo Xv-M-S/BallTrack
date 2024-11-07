@@ -87,7 +87,7 @@ if __name__ == "__main__":
     
     # 批量生成
     # 示例调用
-    background_folder = '/data01/migu/soccer-track/BallDataSets/ballIn_and_ballOut/test/images/'  # 背景图片文件夹
+    background_folder = '/data01/migu/soccer-track/BallDataSets/ballIn_and_ballOut/train/images/'  # 背景图片文件夹
     ball_folder = './data/ball'              # 球图片文件夹
     output_image_folder = './output/images'   # 输出图片文件夹
     output_annotation_folder = './output/labels'  # 输出标注文件夹
