@@ -154,14 +154,14 @@ ultralytics                 8.3.33
 
 ## [把球用SAM分割出来放在任意位置](https://github.com/Xv-M-S/BallTrack/blob/main/DataAugment/put_ball_everywhere/put_ball_everywhere.py)
 
-1. 首先找几张比较清晰的球的图片，使用[SAM在线demo网站](https://segment-anything.com/demo)分割出球，放到``​文件夹下
+1. 首先找几张比较清晰的球的图片，使用[SAM在线demo网站](https://segment-anything.com/demo)分割出球，放到`data/ball`​文件夹下
 2. 找需要放球的数据集作为背景图片
 3. 指定增强图片和标注的输出文件夹
 4. 运行`process_images()`​函数
 
 ## [把球用SAM分割出来放到广告牌处](https://github.com/Xv-M-S/BallTrack/blob/main/DataAugment/put_ball_everywhere/put_ball_on_real_ad.py)
 
-1. 首先找几张比较清晰的球的图片，使用[SAM在线demo网站](https://segment-anything.com/demo)分割出球，放到``​文件夹下
+1. 首先找几张比较清晰的球的图片，使用[SAM在线demo网站](https://segment-anything.com/demo)分割出球，放到`data/ball`​文件夹下
 2. 使用darklabel标注软件标注出含有广告牌的位置，标注保存为yolo格式
 3. 指定增强图片和标注的输出文件夹
 4. 运行`process_images()`​函数
